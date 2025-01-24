@@ -16,6 +16,10 @@ class Hobby(models.Model):
     verbose_name=_("Icon name")
   )
 
+  class Meta:
+    verbose_name = _("Hobby")
+    verbose_name_plural = _("Hobbies")
+
 
 class GiftoUser(models.Model):
   user = models.ForeignKey(
@@ -43,6 +47,10 @@ class GiftoUser(models.Model):
     verbose_name=_("Hobbies")
   )
 
+  class Meta:
+    verbose_name = _("Gifto User")
+    verbose_name_plural = _("Gifto Users")
+
 
 class Category(models.Model):
   category_id = models.IntegerField(
@@ -53,6 +61,10 @@ class Category(models.Model):
     max_length=32,
     verbose_name=_("Category name")
   )
+
+  class Meta:
+    verbose_name = _("Category")
+    verbose_name_plural = _("Categories")
 
 
 class Product(models.Model):
@@ -98,3 +110,7 @@ class Product(models.Model):
     default=False,
     verbose_name=_("Amazon bestseller/choice")
   )
+
+  class Meta:
+    verbose_name = _("Product")
+    verbose_name_plural = _("Products")

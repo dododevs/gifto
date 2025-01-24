@@ -62,7 +62,7 @@ class Category(models.Model):
   )
 
   name = models.CharField(
-    max_length=32,
+    max_length=256,
     verbose_name=_("Category name")
   )
 

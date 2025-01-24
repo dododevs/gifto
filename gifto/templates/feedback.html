@@ -1,0 +1,59 @@
+{% extends "base.html" %}{% load static i18n %}
+{% block title %}{% trans "Random feedback" %}{% endblock %}
+{% block content %}
+<div class="w-100 text-center d-flex flex-row justify-content-center">
+  <div class="card" style="width: 18rem; top: 12rem;">
+    <div class="card-body">
+      <p class="card-text text-center" id="feedback-card-content" style="color: gray; font-size: 1.6rem;">
+        Age: <span id="feedback-card-user-age" class="text-primary"></span><br>
+        Gender: <span id="feedback-card-user-gender" class="text-danger"></span><br>
+        Hobbies: <span id="feedback-card-user-hobbies" class="text-primary"></span><br>
+      </p>
+      <h1 class="card-title my-5" id="feedback-card-title"></h1>
+      <div class="d-flex flex-row justify-content-center">
+        <a href="#" style="font-size: 3rem;" class="btn btn-danger mx-1" id="feedback-card-reject">&nbsp;No&nbsp;</a>
+        <a href="#" style="font-size: 3rem;" class="btn btn-success mx-1" id="feedback-card-approve">&nbsp;Yes&nbsp;</a>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    fetch("{% url 'rest-random-feedback' %}").then(res => res.json()).then(j => {
+      window.j = j;
+      $('#feedback-card-user-age').text(j.user.age);
+      $('#feedback-card-user-gender').text(j.user.gender);
+      $('#feedback-card-user-hobbies').text(j.user.hobbies.map(h => h.name).join(", "));
+      $('#feedback-card-title').text(j.category.name);
+    }).catch(err => {});
+    $('#feedback-card-approve').on("click", function(e) {
+      window.j.feedback = true;
+      e.preventDefault();
+      fetch("{% url 'rest-random-feedback' %}", {
+        method: "POST",
+        body: JSON.stringify(window.j),
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.json()).then(j => {
+        window.location.reload();
+      }).catch(err => {});
+    });
+    $('#feedback-card-reject').on("click", function(e) {
+      window.j.feedback = false;
+      e.preventDefault();
+      fetch("{% url 'rest-random-feedback' %}", {
+        method: "POST",
+        body: JSON.stringify(window.j),
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+          "Content-Type": "application/json"
+        }
+      }).then(res => res.json()).then(j => {
+        window.location.reload();
+      }).catch(err => {});
+    });
+  })
+</script>
+{% endblock %}

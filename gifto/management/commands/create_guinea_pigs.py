@@ -1,5 +1,6 @@
 import random
 import uuid
+import numpy as np
 from django.contrib.auth.models import User
 from django.core.management import BaseCommand
 
@@ -26,10 +27,15 @@ class Command(BaseCommand):
         user=User.objects.create(
           username=f"_gp_{str(uuid.uuid4())}"
         ),
-        age=random.randrange(2, 89),
+        age=random.choice(
+          [i for i in range(1, 10)] +
+          [i for i in range(10, 35)] * 4 +
+          [i for i in range(35, 60)] * 2 +
+          [i for i in range(61, 90)]
+        ),
         gender=random.choice(["M"] * 10 + ["F"] * 10 + ["O"])
       )
-      for _ in range(2, random.randrange(2, 6)):
+      for _ in range(2, random.randrange(3, 6)):
         hobby = random.choice(hobbies)
         if not guser.hobbies.filter(name=hobby.name).exists():
           guser.hobbies.add(hobby)

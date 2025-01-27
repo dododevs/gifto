@@ -23,7 +23,7 @@
       window.j = j;
       $('#feedback-card-user-age').text(j.user.age);
       $('#feedback-card-user-gender').text(j.user.gender);
-      $('#feedback-card-user-hobbies').text(j.user.hobbies.map(h => h.name).join(", "));
+      $('#feedback-card-user-hobbies').text(j.user.hobbies.length ? j.user.hobbies.map(h => h.name).join(", ") : "None");
       $('#feedback-card-title').text(j.category.name);
     }).catch(err => {});
     $('#feedback-card-approve').on("click", function(e) {

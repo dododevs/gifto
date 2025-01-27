@@ -1,0 +1,130 @@
+{% extends "base.html" %}{% load static i18n %}
+{% block title %}{% trans "Random feedback" %}{% endblock %}
+{% block content %}
+<div class="w-100 text-center">
+  <div id="tab-ideas" class="tab active w-100 d-flex flex-column justify-content-center">
+    
+  </div>
+  <div id="tab-gift-search" class="tab w-100 d-flex flex-column justify-content-center">
+    <h4 class="rubik-400 mt-5">{% trans "Find a gift for..." %}</h4>
+    <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Gender" %}</h4>
+    <div class="d-flex flex-row justify-content-center">
+      <div class="btn-group w-100 m-3" role="group">
+        <input type="radio" class="btn-check" name="gender-radio" id="gender-f" autocomplete="off" checked>
+        <label class="btn btn-outline-dark" for="gender-f"><i style="font-size: 3rem;" class="mdi mdi-gender-female"></i><br>{% trans "Female" %}</label>
+        <input type="radio" class="btn-check" name="gender-radio" id="gender-m" autocomplete="off">
+        <label class="btn btn-outline-dark" for="gender-m"><i style="font-size: 3rem;" class="mdi mdi-gender-male"></i><br>{% trans "Male" %}</label>
+        <input type="radio" class="btn-check" name="gender-radio" id="gender-o" autocomplete="off">
+        <label class="btn btn-outline-dark" for="gender-o"><i style="font-size: 3rem;" class="mdi mdi-gender-non-binary"></i><br>{% trans "Other" %}</label>
+      </div>
+    </div>
+
+    <h5>&nbsp;</h5>
+    <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Age" %}</h4>
+    <div class="m-2">
+      <label for="age" class="form-label rubik-400" style="font-size: 1.5rem;" id="age-label">35</label>
+      <input type="range" class="form-range" min="1" max="90" value="35" step="1" id="age">
+    </div>
+
+    <h5>&nbsp;</h5>
+    <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Hobbies & Interests" %}</h4>
+    <div class="m-2">
+      <div class="card my-4 p-2 rubik-300 pointer">
+        <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
+          <i class="mdi mdi-tree"></i>
+          <h4 class="m-0">Environmental Activism</h4>
+          <i class="mdi mdi-checkbox-blank-outline"></i>
+        </div>
+      </div>
+      <div class="card my-4 p-2 rubik-300 pointer">
+        <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
+          <i class="mdi mdi-tree"></i>
+          <h4 class="m-0">Environmental Activism</h4>
+          <i class="mdi mdi-checkbox-blank-outline"></i>
+        </div>
+      </div>
+      <div class="card my-4 p-2 rubik-300 pointer">
+        <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
+          <i class="mdi mdi-tree"></i>
+          <h4 class="m-0">Environmental Activism</h4>
+          <i class="mdi mdi-checkbox-blank-outline"></i>
+        </div>
+      </div>
+      <div class="card my-4 p-2 rubik-300 pointer">
+        <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
+          <i class="mdi mdi-tree"></i>
+          <h4 class="m-0">Environmental Activism</h4>
+          <i class="mdi mdi-checkbox-blank-outline"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="height: 4rem;">&nbsp;</div>
+</div>
+<nav class="navbar fixed-bottom bg-body-tertiary justify-content-center">
+  <ul class="nav justify-content-center">
+    <li class="nav-item">
+      <a class="nav-link active" aria-current="page" href="#" id="tab-link-ideas"><i class="mdi mdi-lightbulb"></i></a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" aria-current="page" href="#" id="tab-link-gift-search"><i class="mdi mdi-gift"></i></a>
+    </li>
+  </ul>
+</nav>
+<script>
+$(document).ready(function() {
+  window.tab = "ideas";
+  $('#tab-link-ideas').on("click", function(e) {
+    e.preventDefault();
+    if (window.tab == "ideas") {
+      return;
+    }
+    window.tab = "ideas";
+    $('.nav-link').removeClass("active");
+    $('#tab-link-ideas, #tab-ideas').addClass("active");
+    $('#tab-link-gift-search, #tab-gift-search').removeClass("active");
+  });
+  $('#tab-link-gift-search').on("click", function(e) {
+    e.preventDefault();
+    if (window.tab == "gift-search") {
+      return;
+    }
+    window.tab = "gift-search";
+    $('.nav-link').removeClass("active");
+    $('#tab-link-ideas, #tab-ideas').removeClass("active");
+    $('#tab-link-gift-search, #tab-gift-search').addClass("active");
+  });
+  $('#age').on("mousemove", function(e) {
+    $('#age-label').text($('#age').val());
+  });
+  $('#age').on("change", function(e) {
+    $('#age-label').text($('#age').val());
+  });
+});
+</script>
+{% endblock %}
+{% block extrahead %}
+<style>
+nav .nav-link.active {
+  color: #454545;
+}
+nav .nav-link {
+  color: #989898;
+  font-size: 1.5rem;
+}
+.tab {
+  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+  opacity: 0;
+  transform: scale(0.9);
+  pointer-events: none;
+}
+.tab.active {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: all;
+}
+.pointer {
+  cursor: pointer;
+}
+</style>
+{% endblock %}

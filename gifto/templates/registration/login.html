@@ -1,0 +1,31 @@
+{% extends "base.html" %}{% load static i18n %}
+{% block title %}{% trans "Gifto • Login" %}{% endblock %}
+{% block content %}
+<div class="text-center">
+  <main class="form-signin mx-auto" style="width: 32rem;">
+    <form method="post">
+      {% csrf_token %}
+      <h1>Gifto</h1>
+      <h2 class="mb-5">Where gifts come true</h2>
+
+      {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger text-justify">
+          {{ error }}
+        </div>
+        {% endfor %}
+      {% endif %}
+
+      <div class="form-floating">
+        <input type="text" class="form-control" name="username" id="floatingInput" autocapitalize="none" autocomplete="username" required autofocus placeholder="name@example.com">
+        <label for="floatingInput">{% trans "Username" %}</label>
+      </div>
+      <div class="form-floating">
+        <input type="password" class="form-control" name="password" id="floatingPassword" required autocapitalize="none" autocomplete="current-password" placeholder="Password">
+        <label for="floatingPassword">{% trans "Password" %}</label>
+      </div>
+      <button class="w-100 btn btn-lg btn-primary mt-4" type="submit">{% trans "Entra" %}</button>
+    </form>
+  </main>
+</div>
+{% endblock %}

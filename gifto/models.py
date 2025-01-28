@@ -9,6 +9,13 @@ class Hobby(models.Model):
     verbose_name=_("Name")
   )
 
+  slug = models.CharField(
+    max_length=64,
+    blank=True,
+    null=True,
+    verbose_name=_("Slug")
+  )
+
   icon_id = models.CharField(
     max_length=16,
     blank=True,

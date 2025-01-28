@@ -106,7 +106,7 @@ $(document).ready(function() {
         $('#loading-overlay').toggleClass("active");
         $('#tab-ideas, #tab-gift-search').hide();
         $('#tab-results').show();
-      }, 1000);
+      }, 0);
     }).catch(err => { console.log(err)});
   });
 

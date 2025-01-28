@@ -2,7 +2,7 @@
 {% block title %}{% trans "Random feedback" %}{% endblock %}
 {% block content %}
 <div class="w-100 text-center">
-  <div id="tab-ideas" class="tab active w-100 d-flex justify-content-center">
+  <div id="tab-ideas" class="tab active w-100 justify-content-center">
     <div style="width: 75%;" id="card-random-product" class="card mx-auto rubik-300 shadow-sm my-5">
       <div class="card-body d-flex flex-column p-3 align-items-center justify-content-between" style="font-size: 2rem;">
         <img id="card-random-product-img" class="img-fluid px-4 py-2 mx-auto" style="width: auto; height: auto; max-width: 80%; max-height: 16rem;">
@@ -11,7 +11,7 @@
     </div>
   </div>
 
-  <div id="tab-gift-search" class="tab w-100 d-flex flex-column justify-content-center">
+  <div id="tab-gift-search" class="tab w-100 flex-column justify-content-center">
     <h4 class="rubik-400 mt-5">{% trans "Find a gift for..." %}</h4>
     <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Gender" %}</h4>
     <div class="d-flex flex-row justify-content-center">
@@ -47,7 +47,7 @@
     </div>
 
     <h5>&nbsp;</h5>
-    <button class="btn btn-dark rubik-500 p-2 m-2" id="findit" style="font-size: 1.3rem;">
+    <button class="btn btn-dark rubik-500 p-2 m-4" id="findit" style="font-size: 1.3rem; width: 95%;">
       {% trans "Let's go!" %}
     </button>
   </div>
@@ -94,8 +94,10 @@ $(document).ready(function() {
     }
     window.tab = "ideas";
     $('.nav-link').removeClass("active");
-    $('#tab-link-ideas, #tab-ideas').addClass("active");
-    $('#tab-link-gift-search, #tab-gift-search').removeClass("active");
+    $('#tab-link-ideas').addClass("active");
+    $('#tab-link-gift-search').removeClass("active");
+    $('#tab-gift-search').hide(200);
+    $('#tab-ideas').show(200);
   });
   $('#tab-link-gift-search').on("click", function(e) {
     e.preventDefault();
@@ -104,8 +106,10 @@ $(document).ready(function() {
     }
     window.tab = "gift-search";
     $('.nav-link').removeClass("active");
-    $('#tab-link-ideas, #tab-ideas').removeClass("active");
-    $('#tab-link-gift-search, #tab-gift-search').addClass("active");
+    $('#tab-link-ideas').removeClass("active");
+    $('#tab-link-gift-search').addClass("active");
+    $('#tab-ideas').hide(200);
+    $('#tab-gift-search').show(200);
   });
   $('#age').on("mousemove", function(e) {
     $('#age-label').text($('#age').val());
@@ -120,6 +124,7 @@ $(document).ready(function() {
 
   });
   $('#findit').on("click", function(e) {
+    $('#tab-ideas, #tab-gift-search').hide(200);
     $('#loading-overlay').toggleClass("active");
     window.scrollTo({ top: 0, behavior: "instant" });
     $('#tab-ideas, #tab-gift-search').removeClass("active");
@@ -224,6 +229,7 @@ $(document).ready(function() {
   });
 
   window.loadRandomProduct();
+  $('#tab-ideas').show();
 });
 </script>
 {% endblock %}
@@ -236,7 +242,7 @@ nav .nav-link {
   color: #989898;
   font-size: 1.5rem;
 }
-.tab {
+{% comment %} .tab {
   transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
   opacity: 0;
   transform: scale(0.9);
@@ -246,6 +252,9 @@ nav .nav-link {
   opacity: 1;
   transform: scale(1);
   pointer-events: all;
+} {% endcomment %}
+.tab {
+  display: none;
 }
 .pointer {
   cursor: pointer;

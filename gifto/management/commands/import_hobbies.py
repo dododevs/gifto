@@ -14,5 +14,6 @@ class Command(BaseCommand):
       header = next(r)
       for line in r:
         Hobby.objects.create(
-          name=line[0]
+          name=line[0],
+          icon_id=line[1] if len(line) > 1 else None
         )

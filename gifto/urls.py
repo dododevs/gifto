@@ -1,5 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 from gifto.views import Home, RandomFeedbackSurvey
 
@@ -10,5 +12,8 @@ urlpatterns = [
 	path('accounts/', include('django.contrib.auth.urls')),
 	path('random', RandomFeedbackSurvey.as_view(), name="random-feedback"),
 
-	path('home', Home.as_view(), name="home")
+	path('', Home.as_view(), name="home")
 ]
+
+if settings.DEBUG:
+	urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

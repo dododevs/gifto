@@ -74,9 +74,17 @@
   </style>
 </head>
 <body class="w-100">
-  <div class="container-fluid w-100">
-    {% block content %}
-    {% endblock %}
-  </div>
+<div class="container-fluid w-100">
+  {% block content %}
+  {% endblock %}
+  <script>
+    window.csrf_token = "{{ csrf_token }}";
+    window.urls = {
+      randomProducts: `{% url "random-product" %}`,
+      restRandomFeedback: `{% url "rest-random-feedback" %}`,
+      findGift: `{% url "find-gift" %}`
+    };
+  </script>
+</div>
 </body>
 </html>

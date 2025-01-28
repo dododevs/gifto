@@ -1,13 +1,21 @@
 {% extends "base.html" %}{% load static i18n %}
-{% block title %}{% trans "Random feedback" %}{% endblock %}
+{% block title %}{% trans "Gifto" %}{% endblock %}
 {% block content %}
 <div class="w-100 text-center">
   <div id="tab-ideas" class="tab active w-100 justify-content-center">
+    <h5>&nbsp;</h5>
+    <h5>&nbsp;</h5>
     <div style="width: 75%;" id="card-random-product" class="card mx-auto rubik-300 shadow-sm my-5">
       <div class="card-body d-flex flex-column p-3 align-items-center justify-content-between" style="font-size: 2rem;">
         <img id="card-random-product-img" class="img-fluid px-4 py-2 mx-auto" style="width: auto; height: auto; max-width: 80%; max-height: 16rem;">
         <h3 class="rubik-500 mx-auto mt-5" id="card-random-product-name" style="overflow: hidden; display: -webkit-box; text-overflow: ellipsis; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical;"></h3>
       </div>
+    </div>
+    <div class="fixed-bottom" style="margin-bottom: 6rem; z-index: -1;">
+      <p class="text-center rubik-300 text-secondary">{% trans 'Swipe right or left to like or dislike this item.' %}<br>{% trans 'Alternatively you can' %}</p>
+      <button class="btn btn-light rubik-500 p-2" id="skip" style="font-size: 1.3rem; width: 85%;">
+        {% trans "Skip" %}
+      </button>
     </div>
   </div>
 
@@ -52,6 +60,35 @@
     </button>
   </div>
 
+  <div id="tab-results" class="tab w-100 justify-content-center">
+    <h4 class="rubik-400 mt-5">{% trans "Here it is!" %}</h4>
+    <div style="width: 75%;" id="card-top-product" class="mx-auto rubik-300 my-5 d-flex flex-column">
+      <p style="z-index: 99; left: 0;" class="align-self-start">
+        <span class="badge text-bg-primary d-none mt-4" id="card-top-product-bestseller" style="font-size: 1rem;">{% trans "Bestseller" %}</span>
+      </p>
+      <img id="card-top-product-img" class="img-fluid px-4 py-2 mx-auto" style="width: auto; height: auto; max-width: 80%; max-height: 16rem; margin-top: -0rem;">
+      <h3 class="rubik-500 mx-auto mt-5" id="card-top-product-name" style="overflow: hidden; display: -webkit-box; text-overflow: ellipsis; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical;"></h3>
+      <h5 class="rubik-500 mx-auto my-3" id="card-top-product-stars"></h5>
+      <div class="d-flex flex-row w-100 justify-content-around mt-3 align-items-center">
+        <h5 class="rubik-500 p-0 m-0" id="card-top-product-price"></h5>
+        <a id="card-top-product-url" class="btn btn-dark rubik-400">{% trans 'View on Amazon' %}&nbsp;<i class="mdi mdi-arrow-right"></i></a>
+      </div>
+    </div>
+
+    <h5>&nbsp;</h5>
+    <div class="mt-5">
+      <div class="card mx-auto rubik-300 shadow-sm">
+        <div class="card-body d-flex flex-column p-3 align-items-center" style="font-size: 2rem;">
+          <h4 class="rubik-500 m-3 align-self-start" style="font-size: 1rem;">{% trans "Other matches" %}</h4>
+          <div id="card-other-products-container"></div>
+        </div>
+      </div>
+    </div>
+    <a class="btn btn-dark rubik-500 p-2 m-4" href="{% url 'home' %}" style="font-size: 1.3rem; width: 95%;">
+      {% trans "Start over" %}
+    </a>
+  </div>
+
   <div style="height: 4rem;">&nbsp;</div>
 </div>
 
@@ -84,201 +121,8 @@
     </li>
   </ul>
 </nav>
-<script>
-$(document).ready(function() {
-  window.tab = "ideas";
-  $('#tab-link-ideas').on("click", function(e) {
-    e.preventDefault();
-    if (window.tab == "ideas") {
-      return;
-    }
-    window.tab = "ideas";
-    $('.nav-link').removeClass("active");
-    $('#tab-link-ideas').addClass("active");
-    $('#tab-link-gift-search').removeClass("active");
-    $('#tab-gift-search').hide(200);
-    $('#tab-ideas').show(200);
-  });
-  $('#tab-link-gift-search').on("click", function(e) {
-    e.preventDefault();
-    if (window.tab == "gift-search") {
-      return;
-    }
-    window.tab = "gift-search";
-    $('.nav-link').removeClass("active");
-    $('#tab-link-ideas').removeClass("active");
-    $('#tab-link-gift-search').addClass("active");
-    $('#tab-ideas').hide(200);
-    $('#tab-gift-search').show(200);
-  });
-  $('#age').on("mousemove", function(e) {
-    $('#age-label').text($('#age').val());
-  });
-  $('#age').on("change", function(e) {
-    $('#age-label').text($('#age').val());
-  });
-  $('.card-hobby').on("click", function(e) {
-    e.preventDefault();
-    $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-blank-outline");
-    $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-marked");
-    if (this.getAttribute("checked") === "true") {
-      this.setAttribute("checked", "false");
-    } else {
-      this.setAttribute("checked", "true");
-    }
-  });
-  $('#findit').on("click", function(e) {
-    $('#tab-ideas, #tab-gift-search').hide(200);
-    $('#loading-overlay').toggleClass("active");
-    window.scrollTo({ top: 0, behavior: "instant" });
-    $('#tab-ideas, #tab-gift-search').removeClass("active");
-    $('nav').hide();
-    $('body').css({
-      overflow: 'hidden'
-    });
-
-    fetch('{% url "find-gift" %}', {
-      method: "POST",
-      body: JSON.stringify({
-        age: $('#age').val(),
-        gender: [
-          $('#gender-f'),
-          $('#gender-m'),
-          $('#gender-o')
-        ].filter(g => !!g.prop("checked"))[0].attr("id").substring(7).toUpperCase(),
-        hobbies: [...document.querySelectorAll(".card-hobby[checked=true]")].map(card => parseInt(card.getAttribute("data-hobby-pk")))
-      }),
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-        "Content-Type": "application/json"
-      }
-    })
-  });
-
-  window.loadRandomProduct = function() {
-    window.isSwiping = false;
-    fetch('{% url "random-product" %}').then(res => res.json()).then(j => {
-      $('#card-random-product-img').attr("src", j.image_url);
-      $('#card-random-product-name').text(j.name);
-      window.randomProduct = j;
-    }).catch(err => {});
-  }
-  const swiped = function(draggable) {
-    const offset = $(draggable).offset();
-    const offsetParent = $(draggable).offsetParent().offset();
-    const middlePointWindowRatio = (offset.left - offsetParent.left + $(draggable).width() / 2.0) / window.innerWidth;
-    if (middlePointWindowRatio <= 0) {
-      return "left";
-    } else if (middlePointWindowRatio >= 1.0) {
-      return "right";
-    }
-    return null;
-  }
-
-  window.isSwiping = false;
-  $('#card-random-product').draggable({
-    drag: function() {
-      if (window.isSwiping) {
-        return;
-      }
-      window.isSwiping = true;
-      if (swiped(this) === "right") {
-        $('#yes-overlay').addClass("active");
-        setTimeout(() => {
-          fetch("{% url 'rest-random-feedback' %}", {
-            method: "POST",
-            body: JSON.stringify(window.j),
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-              "Content-Type": "application/json"
-            }
-          }).then(res => res.json()).then(j => {
-            $('#yes-overlay').removeClass("active");
-            window.loadRandomProduct();
-          }).catch(err => {
-            $('#yes-overlay').removeClass("active");
-            window.loadRandomProduct();
-          });
-        }, 1000);
-      } else if (swiped(this) === "left") {
-        $('#no-overlay').addClass("active");
-        setTimeout(() => {
-          fetch("{% url 'rest-random-feedback' %}", {
-            method: "POST",
-            body: JSON.stringify(window.j),
-            headers: {
-              "X-CSRFToken": "{{ csrf_token }}",
-              "Content-Type": "application/json"
-            }
-          }).then(res => res.json()).then(j => {
-            $('#no-overlay').removeClass("active");
-            window.loadRandomProduct();
-          }).catch(err => {
-            $('#no-overlay').removeClass("active");
-            window.loadRandomProduct();
-          });
-        }, 1000);
-      } else {
-        window.isSwiping = false;
-      }
-    },
-    stop: function() {
-      $(this).css({ top: 0, left: 0 });
-    },
-    axis: "x",
-    revert: function() {
-      return true;
-    },
-    scroll: false
-  });
-
-  window.loadRandomProduct();
-  $('#tab-ideas').show();
-});
-</script>
+<script src="{% static 'home.js' %}"></script>
 {% endblock %}
 {% block extrahead %}
-<style>
-nav .nav-link.active {
-  color: #454545;
-}
-nav .nav-link {
-  color: #989898;
-  font-size: 1.5rem;
-}
-{% comment %} .tab {
-  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none;
-}
-.tab.active {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: all;
-} {% endcomment %}
-.tab {
-  display: none;
-}
-.pointer {
-  cursor: pointer;
-}
-.card-hobby-checkbox, .card-hobby h4 {
-  pointer-events: none;
-}
-
-#loading-overlay, #yes-overlay, #no-overlay {
-  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-#loading-overlay.active, #yes-overlay.active, #no-overlay.active {
-  opacity: 1;
-  transform: scale(1);
-}
-</style>
+<link href="{% static 'home.css' %}" rel="stylesheet">
 {% endblock %}

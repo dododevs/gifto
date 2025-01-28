@@ -9,7 +9,7 @@ from rest_framework.response import Response
 
 from gifto.models import GiftoUser, Category, CategoryFeedback, Product
 from gifto.rest.serializers import CategorySerializer, CategoryFeedbackSerializer, ProductSerializer, GiftRequestSerializer
-from gifto.ml_model import recommend
+from gifto.ml_model.recommend import recommend 
 
 
 class RandomFeedback(views.APIView):
@@ -51,7 +51,16 @@ class FindGift(views.APIView):
       data=request.data
     )
     if serializer.is_valid():
-      top_products = random.choice(Product.objects.all())
+      # top_products = recommend(
+      #   user_age=serializer.validated_data["age"],
+      #   user_gender={
+      #     "M": "male",
+      #     "F": "female",
+      #     "O": "male"
+      #   }[serializer.validated_data["gender"]],
+      #   user_hobbies=""
+      # )
+      top_products = random.sample(Product.objects.all(), k=5)
       serializer = ProductSerializer(
         data=top_products,
         many=True

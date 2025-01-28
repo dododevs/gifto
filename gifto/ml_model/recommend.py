@@ -154,7 +154,7 @@ def recommend(user_age, user_gender, user_hobbies):
 
 	# Debug prints
 	# log("\n(DEBUG):\n", candidates[["hobbies_encoded", "category_encoded", "hobbies_category_interaction"]].head(10))
-	return candidates.nlargest(10, "score")["product_id"]
+	return candidates.nlargest(5, "score")["product_id"]
 
 if __name__ == "__main__":
 	main()

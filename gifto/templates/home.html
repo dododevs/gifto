@@ -147,6 +147,7 @@ $(document).ready(function() {
   });
 
   window.loadRandomProduct = function() {
+    window.isSwiping = false;
     fetch('{% url "random-product" %}').then(res => res.json()).then(j => {
       $('#card-random-product-img').attr("src", j.image_url);
       $('#card-random-product-name').text(j.name);
@@ -164,8 +165,14 @@ $(document).ready(function() {
     }
     return null;
   }
+
+  window.isSwiping = false;
   $('#card-random-product').draggable({
     drag: function() {
+      if (window.isSwiping) {
+        return;
+      }
+      window.isSwiping = true;
       if (swiped(this) === "right") {
         $('#yes-overlay').addClass("active");
         setTimeout(() => {
@@ -202,6 +209,8 @@ $(document).ready(function() {
             window.loadRandomProduct();
           });
         }, 1000);
+      } else {
+        window.isSwiping = false;
       }
     },
     axis: "x",

@@ -121,7 +121,11 @@ $(document).ready(function() {
     e.preventDefault();
     $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-blank-outline");
     $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-marked");
-
+    if (this.getAttribute("checked") === "true") {
+      this.setAttribute("checked", "false");
+    } else {
+      this.setAttribute("checked", "true");
+    }
   });
   $('#findit').on("click", function(e) {
     $('#tab-ideas, #tab-gift-search').hide(200);
@@ -142,7 +146,7 @@ $(document).ready(function() {
           $('#gender-m'),
           $('#gender-o')
         ].filter(g => !!g.prop("checked"))[0].attr("id").substring(7).toUpperCase(),
-        hobbies: $(".card-hobby[checked=true]").map(card => parseInt($(card).attr("data-hobby-pk").val()))
+        hobbies: [...document.querySelectorAll(".card-hobby[checked=true]")].map(card => parseInt(card.getAttribute("data-hobby-pk")))
       }),
       headers: {
         "X-CSRFToken": "{{ csrf_token }}",

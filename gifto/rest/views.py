@@ -60,9 +60,9 @@ class FindGift(views.APIView):
       #   }[serializer.validated_data["gender"]],
       #   user_hobbies=""
       # )
-      top_products = random.sample(Product.objects.all(), k=5)
+      top_products = random.sample(list(Product.objects.all()), k=5)
       serializer = ProductSerializer(
-        data=top_products,
+        top_products,
         many=True
       )
       return Response(serializer.data)

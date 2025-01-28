@@ -213,6 +213,9 @@ $(document).ready(function() {
         window.isSwiping = false;
       }
     },
+    stop: function() {
+      $(this).css({ top: 0, left: 0 });
+    },
     axis: "x",
     revert: function() {
       return true;
@@ -249,10 +252,6 @@ nav .nav-link {
 }
 .card-hobby-checkbox, .card-hobby h4 {
   pointer-events: none;
-}
-
-#card-random-product-overlay {
-  pointer-events: all;
 }
 
 #loading-overlay, #yes-overlay, #no-overlay {

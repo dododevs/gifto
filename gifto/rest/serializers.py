@@ -48,3 +48,9 @@ class CategoryFeedbackSerializer(serializers.ModelSerializer):
   class Meta:
     model = CategoryFeedback
     fields = '__all__'
+
+
+class GiftRequestSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = GiftoUser
+    exclude = ['user']

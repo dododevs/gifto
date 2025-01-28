@@ -2,10 +2,11 @@
 {% block title %}{% trans "Random feedback" %}{% endblock %}
 {% block content %}
 <div class="w-100 text-center">
-  <div id="tab-ideas" class="tab active w-100 d-flex flex-column justify-content-center">
-    <div style="width: 75%;" class="card mx-auto my-4 p-2 rubik-300">
-      <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
-        
+  <div id="tab-ideas" class="tab active w-100 d-flex justify-content-center">
+    <div style="width: 75%;" id="card-random-product" class="card mx-auto rubik-300 shadow-sm my-5">
+      <div class="card-body d-flex flex-column p-3 align-items-center justify-content-between" style="font-size: 2rem;">
+        <img id="card-random-product-img" class="img-fluid px-4 py-2 mx-auto" style="width: auto; height: auto; max-width: 80%; max-height: 16rem;">
+        <h3 class="rubik-500 mx-auto mt-5" id="card-random-product-name" style="overflow: hidden; display: -webkit-box; text-overflow: ellipsis; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical;"></h3>
       </div>
     </div>
   </div>
@@ -14,7 +15,7 @@
     <h4 class="rubik-400 mt-5">{% trans "Find a gift for..." %}</h4>
     <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Gender" %}</h4>
     <div class="d-flex flex-row justify-content-center">
-      <div class="btn-group w-100 m-3" role="group">
+      <div class="btn-group w-100 m-3" role="group" id="gender">
         <input type="radio" class="btn-check" name="gender-radio" id="gender-f" autocomplete="off" checked>
         <label class="btn btn-outline-dark" for="gender-f"><i style="font-size: 3rem;" class="mdi mdi-gender-female"></i><br>{% trans "Female" %}</label>
         <input type="radio" class="btn-check" name="gender-radio" id="gender-m" autocomplete="off">
@@ -35,7 +36,7 @@
     <h4 class="rubik-400 mt-5" style="color: #989898;">{% trans "Hobbies & Interests" %}</h4>
     <div class="m-2">
       {% for hobby in all_hobbies %}
-      <div class="card card-hobby my-4 p-2 rubik-300 pointer">
+      <div class="card card-hobby my-4 p-2 rubik-300 pointer" data-hobby-pk="{{ hobby.pk }}">
         <div class="card-body d-flex flex-row p-3 align-items-center justify-content-between" style="font-size: 2rem;">
           <i class="mdi mdi-{{ hobby.icon_id }}"></i>
           <h4 class="m-0">{{ hobby.name }}</h4>
@@ -58,6 +59,18 @@
   <div class="m-2 align-self-center mx-auto text-center">
     <lottie-player src="{% static 'gift.lottie.json' %}" background="transparent" speed="1" style="width: 24rem; height: 24rem;" loop autoplay></lottie-player>
     <h3 style="z-index: -1; margin-top: -8rem; font-size: 1.5rem;" class="rubik-500">{% trans "This will amaze you..." %}</h3>
+  </div>
+</div>
+
+<div class="d-flex container-fluid bg-success w-100 h-100" id="yes-overlay">
+  <div class="m-2 align-self-center mx-auto text-center">
+    <h3 style="font-size: 2rem;" class="rubik-500 text-light">{% trans "Like" %}</h3>
+  </div>
+</div>
+
+<div class="d-flex container-fluid bg-danger w-100 h-100" id="no-overlay">
+  <div class="m-2 align-self-center mx-auto text-center">
+    <h3 style="font-size: 2rem;" class="rubik-500 text-light">{% trans "Nope" %}</h3>
   </div>
 </div>
 
@@ -104,14 +117,101 @@ $(document).ready(function() {
     e.preventDefault();
     $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-blank-outline");
     $(e.target).children(".card-hobby-checkbox").toggleClass("mdi-checkbox-marked");
+
   });
   $('#findit').on("click", function(e) {
     $('#loading-overlay').toggleClass("active");
     window.scrollTo({ top: 0, behavior: "instant" });
     $('#tab-ideas, #tab-gift-search').removeClass("active");
     $('nav').hide();
-    $('body').css({'overflow':'hidden'});
+    $('body').css({
+      overflow: 'hidden'
+    });
+
+    fetch('{% url "find-gift" %}', {
+      method: "POST",
+      body: JSON.stringify({
+        age: $('#age').val(),
+        gender: [
+          $('#gender-f'),
+          $('#gender-m'),
+          $('#gender-o')
+        ].filter(g => !!g.prop("checked"))[0].attr("id").substring(7).toUpperCase(),
+        hobbies: $(".card-hobby[checked=true]").map(card => parseInt($(card).attr("data-hobby-pk").val()))
+      }),
+      headers: {
+        "X-CSRFToken": "{{ csrf_token }}",
+        "Content-Type": "application/json"
+      }
+    })
   });
+
+  window.loadRandomProduct = function() {
+    fetch('{% url "random-product" %}').then(res => res.json()).then(j => {
+      $('#card-random-product-img').attr("src", j.image_url);
+      $('#card-random-product-name').text(j.name);
+      window.randomProduct = j;
+    }).catch(err => {});
+  }
+  const swiped = function(draggable) {
+    const offset = $(draggable).offset();
+    const offsetParent = $(draggable).offsetParent().offset();
+    const middlePointWindowRatio = (offset.left - offsetParent.left + $(draggable).width() / 2.0) / window.innerWidth;
+    if (middlePointWindowRatio <= 0) {
+      return "left";
+    } else if (middlePointWindowRatio >= 1.0) {
+      return "right";
+    }
+    return null;
+  }
+  $('#card-random-product').draggable({
+    drag: function() {
+      if (swiped(this) === "right") {
+        $('#yes-overlay').addClass("active");
+        setTimeout(() => {
+          fetch("{% url 'rest-random-feedback' %}", {
+            method: "POST",
+            body: JSON.stringify(window.j),
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+              "Content-Type": "application/json"
+            }
+          }).then(res => res.json()).then(j => {
+            $('#yes-overlay').removeClass("active");
+            window.loadRandomProduct();
+          }).catch(err => {
+            $('#yes-overlay').removeClass("active");
+            window.loadRandomProduct();
+          });
+        }, 1000);
+      } else if (swiped(this) === "left") {
+        $('#no-overlay').addClass("active");
+        setTimeout(() => {
+          fetch("{% url 'rest-random-feedback' %}", {
+            method: "POST",
+            body: JSON.stringify(window.j),
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}",
+              "Content-Type": "application/json"
+            }
+          }).then(res => res.json()).then(j => {
+            $('#no-overlay').removeClass("active");
+            window.loadRandomProduct();
+          }).catch(err => {
+            $('#no-overlay').removeClass("active");
+            window.loadRandomProduct();
+          });
+        }, 1000);
+      }
+    },
+    axis: "x",
+    revert: function() {
+      return true;
+    },
+    scroll: false
+  });
+
+  window.loadRandomProduct();
 });
 </script>
 {% endblock %}
@@ -141,8 +241,13 @@ nav .nav-link {
 .card-hobby-checkbox, .card-hobby h4 {
   pointer-events: none;
 }
-#loading-overlay {
-  transition: opacity 0.1s ease-in-out, transform 0.1s ease-in-out;
+
+#card-random-product-overlay {
+  pointer-events: all;
+}
+
+#loading-overlay, #yes-overlay, #no-overlay {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
   opacity: 0;
   transform: scale(0.9);
   pointer-events: none;
@@ -150,7 +255,7 @@ nav .nav-link {
   top: 0;
   left: 0;
 }
-#loading-overlay.active {
+#loading-overlay.active, #yes-overlay.active, #no-overlay.active {
   opacity: 1;
   transform: scale(1);
 }

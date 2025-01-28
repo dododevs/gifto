@@ -1,3 +1,7 @@
 Django
 pandas
 djangorestframework
+joblib
+scikit-learn
+lightgbm
+

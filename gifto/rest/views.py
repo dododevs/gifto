@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from gifto.models import GiftoUser, Category, CategoryFeedback, Product
 from gifto.rest.serializers import CategorySerializer, CategoryFeedbackSerializer, ProductSerializer, GiftRequestSerializer
+from gifto.ml_model import recommend
 
 
 class RandomFeedback(views.APIView):

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 
-from gifto.models import GiftoUser, Hobby, Category, CategoryFeedback
+from gifto.models import GiftoUser, Product, Hobby, Category, CategoryFeedback
 
 
 class HobbySerializer(serializers.ModelSerializer):
@@ -21,6 +21,14 @@ class GiftoUserSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
   class Meta:
     model = Category
+    fields = '__all__'
+
+
+class ProductSerializer(serializers.ModelSerializer):
+  category = CategorySerializer()
+  
+  class Meta:
+    model = Product
     fields = '__all__'
 
 

@@ -7,8 +7,8 @@ from rest_framework import generics, views, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from gifto.models import GiftoUser, Category, CategoryFeedback
-from gifto.rest.serializers import CategorySerializer, CategoryFeedbackSerializer
+from gifto.models import GiftoUser, Category, CategoryFeedback, Product
+from gifto.rest.serializers import CategorySerializer, CategoryFeedbackSerializer, ProductSerializer
 
 
 class RandomFeedback(views.APIView):
@@ -34,3 +34,11 @@ class RandomFeedback(views.APIView):
       serializer.save()
       return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RandomProduct(views.APIView):
+  def get(self, request):
+    products = Product.objects.all()
+    product = random.choice(products)
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)

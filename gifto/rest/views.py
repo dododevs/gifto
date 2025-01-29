@@ -39,8 +39,10 @@ class RandomFeedback(views.APIView):
 
 class RandomProduct(views.APIView):
   def get(self, request):
-    products = Product.objects.all()
-    product = random.choice(products)
+    pks = Product.objects.values_list("pk", flat=True)
+    product = Product.objects.get(random.choice(pks))
+    # products = Product.objects.all()
+    # product = random.choice(products)
     serializer = ProductSerializer(product)
     return Response(serializer.data)
 

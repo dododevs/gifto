@@ -51,16 +51,19 @@ class FindGift(views.APIView):
       data=request.data
     )
     if serializer.is_valid():
-      # top_products = recommend(
-      #   user_age=serializer.validated_data["age"],
-      #   user_gender={
-      #     "M": "male",
-      #     "F": "female",
-      #     "O": "male"
-      #   }[serializer.validated_data["gender"]],
-      #   user_hobbies=""
-      # )
-      top_products = random.sample(list(Product.objects.all()), k=5)
+      top_products = recommend(
+        user_age=serializer.validated_data["age"],
+        user_gender={
+          "M": "male",
+          "F": "female",
+          "O": "male"
+        }[serializer.validated_data["gender"]],
+        user_hobbies=",".join([
+          h.slug for h in serializer.validated_data["hobbies"]
+        ])
+      )
+      top_products = [Product.objects.get(asin=asin) for asin in top_products]
+      # top_products = random.sample(list(Product.objects.all()), k=5)
       serializer = ProductSerializer(
         top_products,
         many=True

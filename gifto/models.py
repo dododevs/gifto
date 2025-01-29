@@ -87,7 +87,7 @@ class Product(models.Model):
   )
 
   name = models.CharField(
-    max_length=256,
+    max_length=1024,
     verbose_name=_("Name")
   )
 

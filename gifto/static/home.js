@@ -90,9 +90,9 @@ $(document).ready(function() {
             <div class="d-flex flex-column">
               <span class="p-0 m-1 mb-0 rubik-400 text-start" style="font-size: 1.1rem; overflow: hidden; display: -webkit-box; text-overflow: ellipsis; -webkit-line-clamp: 4; line-clamp: 4; -webkit-box-orient: vertical;">${element.name}</span>
               <div class="d-flex flex-row mx-1 align-items-center">
-                <span class="p-0 m-0 rubik-500 text-start" style="font-size: 1.1rem;">$ ${(top.price / 100).toFixed(2)}</span>
+                <span class="p-0 m-0 rubik-500 text-start" style="font-size: 1.1rem;">$ ${(element.price / 100).toFixed(2)}</span>
                 &nbsp;&bull;&nbsp;
-                <span class="p-0 m-0 rubik-400 text-start" style="font-size: 1.1rem;">${(top.stars / 10).toFixed(1)} &#9733;</span>
+                <span class="p-0 m-0 rubik-400 text-start" style="font-size: 1.1rem;">${(element.stars / 10).toFixed(1)} &#9733;</span>
                 &nbsp;&bull;&nbsp;
                 <span class="p-0 m-0 rubik-400 text-start" style="font-size: 1.1rem;"><a href="${element.product_url}">View</a></span>
               </div>
